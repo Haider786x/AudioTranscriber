@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,6 @@ public class AudioAnalysisService {
         this.webClient = WebClient.builder()
                 .baseUrl(baseUrl)
                 .defaultHeader("Authorization", apiKey)
-                .defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
 
@@ -43,7 +43,7 @@ public class AudioAnalysisService {
             }
 
         } catch (Exception e) {
-            throw new AudioProcessingException(e.getMessage());
+            throw new AudioProcessingException("Audio processing failed: " + e.getMessage());
         }
     }
 
@@ -60,11 +60,11 @@ public class AudioAnalysisService {
             return new AudioAnalysisResponse(result.toString());
 
         } catch (Exception e) {
-            throw new AudioProcessingException(e.getMessage());
+            throw new AudioProcessingException("Audio upload failed: " + e.getMessage());
         }
     }
 
-    // 🔥 ASSEMBLY AI FLOW
+    // 🔥 AssemblyAI transcription flow
     private AudioAnalysisResponse transcribe(byte[] audioBytes) {
 
         // 1️⃣ Upload audio
@@ -75,18 +75,21 @@ public class AudioAnalysisService {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .map(res -> res.get("upload_url").toString())
-                .block();
+                .block(Duration.ofSeconds(30));
 
         // 2️⃣ Request transcription
-        Map<String, String> transcriptRequest = Map.of("audio_url", uploadUrl);
+        Map<String, String> transcriptRequest = Map.of(
+                "audio_url", uploadUrl
+        );
 
         String transcriptId = webClient.post()
                 .uri("/transcript")
+                .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(transcriptRequest)
                 .retrieve()
                 .bodyToMono(Map.class)
                 .map(res -> res.get("id").toString())
-                .block();
+                .block(Duration.ofSeconds(30));
 
         // 3️⃣ Poll until completed
         while (true) {
@@ -94,7 +97,7 @@ public class AudioAnalysisService {
                     .uri("/transcript/" + transcriptId)
                     .retrieve()
                     .bodyToMono(Map.class)
-                    .block();
+                    .block(Duration.ofSeconds(30));
 
             String status = statusResponse.get("status").toString();
 

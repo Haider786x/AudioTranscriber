@@ -7,6 +7,6 @@ server:
 
 assemblyai:
   api:
-    key: 02938fde3b4e4b2e926bc31ff4d532cb
+    key: ${ASSEMBLYAI_API_KEY}
     base-url: https://api.assemblyai.com/v2
 
