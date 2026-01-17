@@ -17,5 +17,3 @@ A full-stack audio transcription web app built with **Spring Boot** and **React*
 - Responsive UI (mobile + desktop)
 - Secure CORS-enabled backend
 - Monorepo setup (Frontend + Backend)
-
-## Environment Variable (Backend)
