@@ -13,8 +13,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000",
-                        "http://localhost:5173"
-                        // add your deployed frontend URL here later
+                        "http://localhost:5173",
+                        "https://audiotranscribe.netlify.app"
                 )
                 .allowedMethods(
                         "GET",
@@ -24,6 +24,6 @@ public class CorsConfig implements WebMvcConfigurer {
                         "OPTIONS"
                 )
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(false); // ✅ MUST be false
     }
 }
