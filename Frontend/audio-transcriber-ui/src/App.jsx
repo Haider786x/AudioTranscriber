@@ -19,10 +19,10 @@ function App() {
 
     try {
       const formData = new FormData();
-      formData.append("audioFiles", file);
+      formData.append("audioFiles", file); // ✅ matches backend
 
       const res = await axios.post(
-        "http://localhost:8080/api/v1/audio/analysis/from-files",
+        "https://audiotranscriber-9jau.onrender.com/api/v1/audio/analysis/from-files",
         formData,
         {
           headers: {
@@ -32,7 +32,8 @@ function App() {
       );
 
       setResponse(res.data.response || "No transcription received.");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Failed to transcribe audio. Please try again.");
     } finally {
       setLoading(false);
