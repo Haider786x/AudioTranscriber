@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: audio-transcriber
+
+server:
+  port: 8080
+
+assemblyai:
+  api:
+    key: 02938fde3b4e4b2e926bc31ff4d532cb
+    base-url: https://api.assemblyai.com/v2
+
